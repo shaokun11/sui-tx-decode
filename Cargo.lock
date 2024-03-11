@@ -4934,9 +4934,7 @@ dependencies = [
  "serde_json",
  "shared-crypto",
  "sui-json-rpc-types",
- "sui-protocol-config",
  "sui-types",
- "wasm-bindgen",
 ]
 
 [[package]]
