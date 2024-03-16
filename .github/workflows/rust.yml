@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Binary Artifact
-          path: target/release/<YOUR_PROJECT_NAME>
+          path: target/release/sui-transaction-decode
 
   upload:
     needs: build
