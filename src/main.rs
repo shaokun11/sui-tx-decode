@@ -14,6 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let tx_base64 = Base64::try_from(String::from(base64_str)).unwrap();
     // let signature_str = "ALJCPPlDe2pc6+Er9Mh/BNQhaK5nScMX0B+Vu674cIQM23GL1WlALg41Vn5km6EwR9dWjQcvkEDof+bSpx2PiwOX/NYXhh+8Elx25+t+Ung/9uoKXk3xB+6n90u5REwfuw==";
     // let signature_base64 = Base64::try_from(String::from(signature_str)).unwrap();
+    
     let data: TransactionData = bcs::from_bytes(&tx_base64.to_vec()?)?;
     let data_str = serde_json::to_string(&data.clone())?;
     if args.len() == 3 {
