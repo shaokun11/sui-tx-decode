@@ -25,7 +25,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Linux Binary
-          path: target/x86_64-unknown-linux-gnu/release/sui-tx-decode
+          path: target/x86_64-unknown-linux-gnu/release/sui-transaction-decode
 
   build-windows:
     runs-on: windows-latest
@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Windows Binary
-          path: target/x86_64-pc-windows-gnu/release/sui-tx-decode.exe
+          path: target/x86_64-pc-windows-gnu/release/sui-transaction-decode.exe
 
   build-macos:
     runs-on: macos-latest
@@ -67,4 +67,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: macOS Binary
-          path: target/x86_64-apple-darwin/release/sui-tx-decode
+          path: target/x86_64-apple-darwin/release/sui-transaction-decode
