@@ -1,0 +1,70 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Build Linux binary
+        run: cargo build --release --target x86_64-unknown-linux-gnu
+
+      - name: Upload Linux binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: Linux Binary
+          path: target/x86_64-unknown-linux-gnu/release/sui-tx-decode
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Build Windows binary
+        run: cargo build --release --target x86_64-pc-windows-gnu
+
+      - name: Upload Windows binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows Binary
+          path: target/x86_64-pc-windows-gnu/release/sui-tx-decode.exe
+
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Build macOS binary
+        run: cargo build --release --target x86_64-apple-darwin
+
+      - name: Upload macOS binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: macOS Binary
+          path: target/x86_64-apple-darwin/release/sui-tx-decode
