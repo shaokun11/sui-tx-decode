@@ -22,16 +22,11 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-
-      - name: Get commit version
-        id: get_commit_version
-        run: echo ::set-output name=COMMIT_MSG::$(git log -1 --pretty=format:%s)
-
       - name: Extract version from commit message
         id: extract_version
         run: |
           VERSION_REGEX="v[0-9]+\.[0-9]+\.[0-9]+"
-          COMMIT_MSG=${{ steps.get_commit_version.outputs.COMMIT_MSG }}
+          COMMIT_MSG=$(git log -1 --pretty=format:%s)
           echo $COMMIT_MSG
           if [[ $COMMIT_MSG =~ $VERSION_REGEX ]]; then
             VERSION="${BASH_REMATCH[0]}"
