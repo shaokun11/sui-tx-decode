@@ -59,8 +59,10 @@ jobs:
         id: extract_version
         run: |
           VERSION_REGEX="^v[0-9]+\.[0-9]+\.[0-9]+$"
-          if [[ ${{ steps.get_last_commit_message.outputs.COMMIT_MSG }} =~ $VERSION_REGEX ]]; then
-            echo ::set-output name=VERSION::${{ steps.get_last_commit_message.outputs.COMMIT_MSG }}
+          COMMIT_MSG="${{ steps.get_last_commit_message.outputs.COMMIT_MSG }}"
+          if [[ $COMMIT_MSG =~ $VERSION_REGEX ]]; then
+            VERSION="${BASH_REMATCH[0]}"
+            echo ::set-output name=VERSION::$VERSION
           else
             echo "Invalid commit message format. Skipping release creation."
             exit 1
