@@ -8,34 +8,17 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [ubuntu-latest]
         # os: [windows-latest, ubuntu-latest, macos-latest]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - name: Extract version from commit message
-        id: extract_version
-        run: |
-          VERSION_REGEX="v[0-9]+\.[0-9]+\.[0-9]+"
-          COMMIT_MSG=$(git log -1 --pretty=format:%s)
-          echo $COMMIT_MSG
-          if [[ $COMMIT_MSG =~ $VERSION_REGEX ]]; then
-            VERSION="${BASH_REMATCH[0]}"
-            echo ::set-output name=VERSION::$VERSION
-          else
-            echo "Invalid commit message format. Skipping release creation."
-            exit 1
-          fi
-
       - name: Build
         run: cargo build --release
 
@@ -64,7 +47,18 @@ jobs:
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
           sudo apt update
           sudo apt install gh
-
+      - name: Extract version from commit message
+        id: extract_version
+        run: |
+            VERSION_REGEX="v[0-9]+\.[0-9]+\.[0-9]+"
+            COMMIT_MSG=$(git log -1 --pretty=format:%s)
+            if [[ $COMMIT_MSG =~ $VERSION_REGEX ]]; then
+              VERSION="${BASH_REMATCH[0]}"
+              echo "::set-output name={VERSION}::{$VERSION}"
+            else
+              echo "Invalid commit message format. Skipping release creation."
+              exit 1
+            fi
       - name: Create or Get Release
         id: create_release
         run: gh release create ${{ steps.extract_version.outputs.VERSION }} --title "Release ${{ steps.extract_version.outputs.VERSION }}" --notes "Release ${{ steps.extract_version.outputs.VERSION }}" --draft=false --prerelease=false
