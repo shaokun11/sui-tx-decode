@@ -2,7 +2,7 @@ name: Build and Upload Artifact
 
 on:
   push:
-   branches:
+    branches:
       - main
 
 jobs:
@@ -11,7 +11,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
+        # os: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
       - name: Checkout code
@@ -21,6 +22,24 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+
+      - name: Get commit version
+        id: get_commit_version
+        run: echo ::set-output name=COMMIT_MSG::$(git log -1 --pretty=format:%s)
+
+      - name: Extract version from commit message
+        id: extract_version
+        run: |
+          VERSION_REGEX="v[0-9]+\.[0-9]+\.[0-9]+"
+          COMMIT_MSG=${{ steps.get_commit_version.outputs.COMMIT_MSG }}
+          echo $COMMIT_MSG
+          if [[ $COMMIT_MSG =~ $VERSION_REGEX ]]; then
+            VERSION="${BASH_REMATCH[0]}"
+            echo ::set-output name=VERSION::$VERSION
+          else
+            echo "Invalid commit message format. Skipping release creation."
+            exit 1
+          fi
 
       - name: Build
         run: cargo build --release
@@ -50,23 +69,6 @@ jobs:
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
           sudo apt update
           sudo apt install gh
-
-      - name: Get commit version
-        id: get_commit_version
-        run: echo ::set-output name=COMMIT_MSG::$(git log -1 --pretty=format:%s)
-
-      - name: Extract version from commit message
-        id: extract_version
-        run: |
-          VERSION_REGEX="^v[0-9]+\.[0-9]+\.[0-9]+$"
-          COMMIT_MSG="${{ steps.get_last_commit_message.outputs.COMMIT_MSG }}"
-          if [[ $COMMIT_MSG =~ $VERSION_REGEX ]]; then
-            VERSION="${BASH_REMATCH[0]}"
-            echo ::set-output name=VERSION::$VERSION
-          else
-            echo "Invalid commit message format. Skipping release creation."
-            exit 1
-          fi    
 
       - name: Create or Get Release
         id: create_release
