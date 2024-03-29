@@ -7,6 +7,7 @@ tx_data =
 let signature =
     "AKD4XdltkCyBi1Heb4EJJ3lzuV3F4u7+CYeaE+Fd7qXpaT17yd4tHWjMf4CWq3TuXBLxTpkc2MV39P6p7eMV8QnqvbuA0Q1Bqu4RHV3JPpqmH+C527hWJGUBOZN1j9sg8w==";
 
+
 const { stdout } = await execa("./target/debug/sui-transaction-decode.exe", [tx_data, signature]).catch(
     () => -1
 );
